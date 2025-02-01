@@ -15,5 +15,5 @@ export interface SequenceItem {
 }
 
 export type SequenceType = 'base' | 'flow';
-export type BaseElement = 'Verse' | 'Chorus' | 'Bridge' | 'Instrumental' | 'Outro' | 'Intro' | 'Interlude';
+export type BaseElement = 'Verse' | 'Chorus' | 'Bridge' | 'Instrumental' | 'Outro' | 'Intro' | 'Interlude' | 'Ending' | 'Tag';
 export type FlowElement = 'Drums' | 'Breakdown' | 'Build' | 'Pause';

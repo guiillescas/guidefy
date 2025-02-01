@@ -102,7 +102,7 @@ export default function Home() {
   const [isFlowElementsExpanded, setIsFlowElementsExpanded] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const baseElements: BaseElement[] = ['Verse', 'Chorus', 'Bridge', 'Instrumental', 'Outro', 'Intro', 'Interlude'];
+  const baseElements: BaseElement[] = ['Intro', 'Verse', 'Chorus', 'Bridge', 'Instrumental', 'Outro', 'Interlude', 'Ending', 'Tag'];
   const flowElements: FlowElement[] = ['Drums', 'Breakdown', 'Build', 'Pause'];
   const repeatingElements = ['Verse', 'Chorus', 'Bridge', 'Instrumental', 'Outro', 'Intro', 'Interlude'];
 

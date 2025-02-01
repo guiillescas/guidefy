@@ -93,12 +93,14 @@ export default function Home() {
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newSongTitle, setNewSongTitle] = useState('');
+  const [newSongKey, setNewSongKey] = useState('');
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [noteText, setNoteText] = useState('');
   const [isNoteModalVisible, setIsNoteModalVisible] = useState(false);
   const [isMenuCollapsed, setIsMenuCollapsed] = useState(false);
   const [isBaseElementsExpanded, setIsBaseElementsExpanded] = useState(true);
   const [isFlowElementsExpanded, setIsFlowElementsExpanded] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const baseElements: BaseElement[] = ['Verse', 'Chorus', 'Bridge', 'Instrumental', 'Outro', 'Intro', 'Interlude'];
   const flowElements: FlowElement[] = ['Drums', 'Breakdown', 'Build', 'Pause'];
@@ -120,11 +122,13 @@ export default function Home() {
       const newSong: Song = {
         id: Date.now().toString(),
         title: newSongTitle.trim(),
+        key: newSongKey.trim(),
         sequence: []
       };
       
       setSongs([...songs, newSong]);
       setNewSongTitle('');
+      setNewSongKey('');
       setIsModalVisible(false);
     }
   };
@@ -268,10 +272,24 @@ export default function Home() {
   return (
     <div className="fixed inset-0 bg-gray-900">
       <main className="flex h-full w-full bg-gray-900">
+        <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-gray-800 border-b border-gray-700 z-10 flex items-center px-4">
+          <button
+            className="p-2"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <IoMenu className="text-white text-2xl" />
+          </button>
+          <h1 className="text-xl font-bold text-white ml-4">
+            {selectedSong ? selectedSong.title : 'Songs'}
+          </h1>
+        </div>
+
         <div 
-          className={`border-r border-gray-700 transition-all duration-300 h-full ${
+          className={`fixed md:relative z-20 bg-gray-900 border-r border-gray-700 transition-all duration-300 h-full ${
             isMenuCollapsed ? 'w-20' : 'w-1/3'
-          }`}
+          } ${
+            isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          } md:translate-x-0`}
         >
           <div className="p-4 border-b border-gray-700">
             <div className="flex items-center justify-between">
@@ -313,13 +331,20 @@ export default function Home() {
                 }`}
                 onClick={() => setSelectedSong(song)}
               >
-                {isMenuCollapsed ? (
+                {isMenuCollapsed && window.innerWidth >= 768 ? (
                   <span className="text-lg text-white w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                     {song.title[0]}
                   </span>
                 ) : (
                   <div className="flex items-center justify-between w-full">
-                    <span className="text-lg text-white">{song.title}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg text-white">{song.title}</span>
+                      {song.key && (
+                        <span className="px-2 py-1 bg-blue-600/30 rounded-md text-sm font-medium text-blue-300">
+                          {song.key}
+                        </span>
+                      )}
+                    </div>
                     <button
                       className="ml-2 p-2"
                       onClick={(e) => {
@@ -336,12 +361,19 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex-1 p-6 flex flex-col h-full">
+        <div className="flex-1 p-6 flex flex-col h-full md:h-full mt-16 md:mt-0">
           {selectedSong ? (
             <div className="flex-1 flex flex-col h-full">
-              <h2 className="text-3xl font-bold text-white mb-6 text-center">
-                {selectedSong.title}
-              </h2>
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <h2 className="text-3xl font-bold text-white text-center">
+                  {selectedSong.title}
+                </h2>
+                {selectedSong.key && (
+                  <span className="px-3 py-1 bg-blue-600/30 rounded-md text-lg font-medium text-blue-300">
+                    {selectedSong.key}
+                  </span>
+                )}
+              </div>
               
               <div className="mb-6">
                 <button 
@@ -473,11 +505,18 @@ export default function Home() {
                 value={newSongTitle}
                 onChange={(e) => setNewSongTitle(e.target.value)}
               />
+              <input
+                className="bg-gray-700 text-white p-3 rounded-lg mb-4 w-full"
+                placeholder="Key (e.g., C, Am, F#)"
+                value={newSongKey}
+                onChange={(e) => setNewSongKey(e.target.value)}
+              />
               <div className="flex justify-end gap-2">
                 <button
                   className="bg-gray-600 p-3 rounded-lg flex-1"
                   onClick={() => {
                     setNewSongTitle('');
+                    setNewSongKey('');
                     setIsModalVisible(false);
                   }}
                 >
@@ -527,6 +566,13 @@ export default function Home() {
               </div>
             </div>
           </div>
+        )}
+
+        {isMobileMenuOpen && (
+          <div 
+            className="md:hidden fixed inset-0 bg-black/50 z-10"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
         )}
       </main>
     </div>

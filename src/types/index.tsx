@@ -1,6 +1,7 @@
 export interface Song {
   id: string;
   title: string;
+  key?: string;
   sequence: SequenceItem[];
 }
 

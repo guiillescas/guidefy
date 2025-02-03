@@ -24,12 +24,13 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useCountUp } from '@/hooks/useCountUp'
 
 const stats = [
-  { value: '500+', label: 'Songs Organized' },
-  { value: '100+', label: 'Active Users' },
-  { value: '1000+', label: 'Setlists Created' },
-  { value: '4.9', label: 'Average Rating' },
+  { value: 500, label: 'Songs Organized', prefix: '+' },
+  { value: 100, label: 'Active Users', prefix: '+' },
+  { value: 1000, label: 'Setlists Created', prefix: '+' },
+  { value: 4.9, label: 'Average Rating', decimals: 1 },
 ];
 
 // Discord Icon Component
@@ -229,18 +230,18 @@ export default function LandingPage() {
               <p className="text-gray-400 text-lg lg:text-xl mb-8 max-w-lg">
                 Stop struggling with setlist organization. Guidefy helps music directors 
                 create and modify song sequences in seconds, so you can focus on what 
-                matters: making great music.
+                matters: <span className="font-semibold">making great music</span>.
               </p>
 
               {/* Quick Benefits */}
-              <div className="mt-12 grid grid-cols-2 gap-6 text-sm">
+              <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
                 {[
                   { icon: <Shuffle className="h-5 w-5" />, text: "Instant song reordering" },
                   { icon: <Music4 className="h-5 w-5" />, text: "Quick setlist creation" },
                 ].map((benefit, index) => (
                   <div 
                     key={index}
-                    className="flex items-center gap-3 text-gray-400"
+                    className="flex items-center gap-3 text-gray-400 justify-center sm:justify-start"
                   >
                     <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
                       {benefit.icon}
@@ -517,28 +518,27 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-32"
           >
-            {[
-              { value: '500+', label: 'Songs Organized' },
-              { value: '100+', label: 'Active Users' },
-              { value: '1000+', label: 'Setlists Created' },
-              { value: '4.9', label: 'Average Rating' },
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center"
-              >
-                <div className="font-space text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-gray-400">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
+            {stats.map((stat, index) => {
+              const value = useCountUp(stat.value)
+              
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="text-center"
+                >
+                  <div className="font-space text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
+                    {stat.prefix || ''}{stat.decimals ? value.toFixed(stat.decimals) : Math.round(value)}
+                  </div>
+                  <div className="text-gray-400">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              )
+            })}
           </motion.div>
 
           {/* Final CTA */}

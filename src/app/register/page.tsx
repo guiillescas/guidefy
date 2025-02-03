@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { register as registerUser } from '@/actions/auth'
 import { motion } from 'framer-motion'
@@ -13,6 +13,7 @@ import { registerSchema, type RegisterFormData } from '@/lib/validations/auth'
 export default function RegisterPage() {
   const router = useRouter()
   const [error, setError] = useState('')
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
 
   const {
     register,
@@ -21,6 +22,14 @@ export default function RegisterPage() {
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema)
   })
+
+  // Hook para pegar o tamanho da janela apenas no cliente
+  useEffect(() => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight
+    })
+  }, [])
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
@@ -80,8 +89,8 @@ export default function RegisterPage() {
           key={index}
           className="absolute text-blue-500/20 text-4xl font-bold"
           initial={{ 
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight 
+            x: Math.random() * (windowSize.width || 0),
+            y: Math.random() * (windowSize.height || 0)
           }}
           animate={{
             y: [0, -100, 0],

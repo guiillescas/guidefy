@@ -5,6 +5,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { IoClose, IoPencil, IoReorderTwo, IoAdd, IoCopy } from 'react-icons/io5';
 import type { SequenceItem } from '@/types';
 import { useSongStore } from '@/store/songStore';
+import { getElementColors } from '@/utils/colors';
 
 function hasMultipleOccurrences(element: string): boolean {
   const sequence = useSongStore.getState().selectedSong?.sequence || [];
@@ -73,7 +74,7 @@ export function SequenceItem({
         pointerEvents: 'none'
       }}
       className={`mb-2 rounded-lg select-none ${
-        item.type === 'base' ? 'bg-blue-900/50' : 'bg-purple-900/50'
+        item.type === 'base' ? getElementColors(item.element).bg : 'bg-purple-900/50'
       } ${isDragging ? 'opacity-50' : ''}`}
     >
       <div 

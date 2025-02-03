@@ -20,6 +20,7 @@ import { SequenceItem } from './SequenceItem';
 import { NoteModal } from './NoteModal';
 import { ElementSelector } from './ElementSelector';
 import { Badge } from './ui/badge';
+import { getAbbreviation } from '@/utils/abbreviations';
 
 export function SequenceEditor() {
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
@@ -61,6 +62,13 @@ export function SequenceEditor() {
     );
   }
 
+  const sequenceSummary = selectedSong?.sequence.map(item => {
+    const abbr = getAbbreviation(item.element);
+    return item.type === 'base' && item.occurrence && item.occurrence > 1 
+      ? `${abbr}${item.occurrence}` 
+      : abbr;
+  }).join(', ');
+
   return (
     <div className="flex-1 flex">
       <div className="flex-1 p-6 overflow-y-auto">
@@ -69,6 +77,14 @@ export function SequenceEditor() {
           {selectedSong.key && ' - '}
           {selectedSong.key && <Badge className="text-lg p-0 bg-blue-900 hover:bg-blue-900 w-9 h-9 flex items-center justify-center">{selectedSong.key}</Badge>}
         </h1>
+
+        {selectedSong && (
+          <div className="bg-gray-800/50 p-3 rounded-lg mb-4 overflow-x-auto">
+            <p className="text-gray-300 text-sm font-bold">
+              {sequenceSummary || 'Add elements to see sequence summary'}
+            </p>
+          </div>
+        )}
 
         <div className="max-w-2xl">
           <DndContext

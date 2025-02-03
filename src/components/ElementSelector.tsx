@@ -1,20 +1,20 @@
 'use client';
 
-import { useState } from 'react';
 import { useSongStore } from '@/store/songStore';
 import type { BaseElement, FlowElement } from '@/types';
+import { getElementColors } from '@/utils/colors';
 
 const baseElements: BaseElement[] = [
+  'Intro',
   'Verse',
   'Pre-Chorus',
   'Chorus',
   'Bridge',
   'Instrumental',
-  'Intro',
   'Interlude',
   'Outro',
+  'Tag',
   'Ending',
-  'Tag'
 ];
 
 const flowElements: FlowElement[] = [
@@ -50,7 +50,7 @@ export function ElementSelector() {
             <div key={element}>
               <button
                 onClick={() => addSequenceItem(element, 'base', 1)}
-                className="w-full p-3 text-left text-white rounded-lg bg-blue-900/50 hover:bg-blue-900/70"
+                className={`w-full p-3 text-left text-white rounded-lg ${getElementColors(element).bg} ${getElementColors(element).hover}`}
               >
                 {element}
               </button>
@@ -60,7 +60,7 @@ export function ElementSelector() {
                   <button
                     key={num}
                     onClick={() => addSequenceItem(element, 'base', num)}
-                    className="w-8 h-8 flex items-center justify-center text-white rounded-lg bg-blue-900/30 hover:bg-blue-900/50"
+                    className={`w-8 h-8 flex items-center justify-center text-white rounded-lg ${getElementColors(element).numeral}`}
                   >
                     {num}
                   </button>

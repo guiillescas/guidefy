@@ -2,16 +2,33 @@
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { IoClose, IoPencil, IoReorderTwo } from 'react-icons/io5';
+import { IoClose, IoPencil, IoReorderTwo, IoAdd, IoCopy } from 'react-icons/io5';
 import type { SequenceItem } from '@/types';
+import { useSongStore } from '@/store/songStore';
 
-interface SortableItemProps {
+function hasMultipleOccurrences(element: string): boolean {
+  const sequence = useSongStore.getState().selectedSong?.sequence || [];
+  return sequence.filter(item => 
+    item.type === 'base' && 
+    item.element === element
+  ).length > 1;
+}
+
+interface SequenceItemProps {
   item: SequenceItem;
   onEditNote: (id: string) => void;
   onDeleteItem: (id: string) => void;
+  onDuplicateItem?: (element: string, occurrence: number) => void;
+  onAddNextOccurrence?: (element: string, currentOccurrence: number) => void;
 }
 
-export function SortableItem({ item, onEditNote, onDeleteItem }: SortableItemProps) {
+export function SequenceItem({ 
+  item, 
+  onEditNote, 
+  onDeleteItem,
+  onDuplicateItem,
+  onAddNextOccurrence 
+}: SequenceItemProps) {
   const {
     attributes,
     listeners,
@@ -36,6 +53,12 @@ export function SortableItem({ item, onEditNote, onDeleteItem }: SortableItemPro
     WebkitTouchCallout: 'none' as const,
     WebkitUserModify: 'read-write-plaintext-only' as const,
   };
+
+  const displayText = item.type === 'base' 
+    ? hasMultipleOccurrences(item.element) 
+      ? `${item.element} ${item.occurrence || '1'}`
+      : item.element
+    : item.element;
 
   return (
     <div
@@ -75,10 +98,32 @@ export function SortableItem({ item, onEditNote, onDeleteItem }: SortableItemPro
               WebkitUserModify: 'read-only'
             }}
           >
-            {item.occurrence ? `${item.element} ${item.occurrence}` : item.element}
+            {displayText}
           </span>
         </div>
         <div className="flex items-center gap-1">
+          {item.type === 'base' && (
+            <>
+              {onDuplicateItem && (
+                <button
+                  onClick={() => onDuplicateItem(item.element, item.occurrence || 1)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  title={`Duplicate ${item.element} ${item.occurrence || 1}`}
+                >
+                  <IoCopy className="text-white text-xl" />
+                </button>
+              )}
+              {onAddNextOccurrence && (
+                <button
+                  onClick={() => onAddNextOccurrence(item.element, item.occurrence || 1)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                  title={`Add ${item.element} ${(item.occurrence || 1) + 1}`}
+                >
+                  <IoAdd className="text-white text-xl" />
+                </button>
+              )}
+            </>
+          )}
           <button
             onClick={() => onEditNote(item.id)}
             className="p-2 hover:bg-white/10 rounded-lg transition-colors"

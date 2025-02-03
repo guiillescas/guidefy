@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useSongStore } from '@/store/songStore';
 import type { BaseElement, FlowElement } from '@/types';
 
@@ -24,7 +25,21 @@ const flowElements: FlowElement[] = [
 ];
 
 export function ElementSelector() {
-  const { addSequenceItem } = useSongStore();
+  const { addSequenceItem, selectedSong } = useSongStore();
+
+  const getAvailableNumbers = (element: BaseElement): number[] => {
+    if (!selectedSong) return [];
+    
+    const occurrences = selectedSong.sequence
+      .filter(item => item.type === 'base' && item.element === element)
+      .map(item => item.occurrence || 1);
+    
+    const maxOccurrence = Math.max(...occurrences, 0);
+    // Se existem ocorrências, retorna um array com todos os números do 2 até maxOccurrence + 1
+    return maxOccurrence > 0 
+      ? Array.from({ length: maxOccurrence }, (_, i) => i + 2)
+      : [];
+  };
 
   return (
     <div className="w-64 border-l border-gray-800 p-4 overflow-y-auto">
@@ -32,13 +47,26 @@ export function ElementSelector() {
         <h3 className="text-white font-bold mb-3">Base Elements</h3>
         <div className="space-y-2">
           {baseElements.map((element) => (
-            <button
-              key={element}
-              onClick={() => addSequenceItem(element, 'base')}
-              className="w-full p-3 text-left text-white rounded-lg bg-blue-900/50 hover:bg-blue-900/70"
-            >
-              {element}
-            </button>
+            <div key={element}>
+              <button
+                onClick={() => addSequenceItem(element, 'base', 1)}
+                className="w-full p-3 text-left text-white rounded-lg bg-blue-900/50 hover:bg-blue-900/70"
+              >
+                {element}
+              </button>
+              
+              <div className="flex flex-wrap gap-2 mt-2 pl-4">
+                {getAvailableNumbers(element).map((num) => (
+                  <button
+                    key={num}
+                    onClick={() => addSequenceItem(element, 'base', num)}
+                    className="w-8 h-8 flex items-center justify-center text-white rounded-lg bg-blue-900/30 hover:bg-blue-900/50"
+                  >
+                    {num}
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </div>

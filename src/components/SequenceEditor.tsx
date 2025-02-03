@@ -16,7 +16,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { useSongStore } from '@/store/songStore';
-import { SortableItem } from './SortableItem';
+import { SequenceItem } from './SequenceItem';
 import { NoteModal } from './NoteModal';
 import { ElementSelector } from './ElementSelector';
 import { Badge } from './ui/badge';
@@ -81,7 +81,7 @@ export function SequenceEditor() {
               strategy={verticalListSortingStrategy}
             >
               {selectedSong.sequence.map((item) => (
-                <SortableItem
+                <SequenceItem
                   key={item.id}
                   item={item}
                   onEditNote={(id) => setEditingNoteId(id)}

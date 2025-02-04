@@ -62,5 +62,39 @@ export default {
       },
   	}
   },
+	safelist: [
+    // Cyan
+    'bg-cyan-900/50',
+    'hover:bg-cyan-900/70',
+    'bg-cyan-900/30',
+    'hover:bg-cyan-900/50',
+    // Blue
+    'bg-blue-900/50',
+    'hover:bg-blue-900/70',
+    'bg-blue-900/30',
+    'hover:bg-blue-900/50',
+    // Yellow
+    'bg-yellow-900/50',
+    'hover:bg-yellow-900/70',
+    'bg-yellow-900/30',
+    'hover:bg-yellow-900/50',
+    // Orange
+    'bg-orange-900/50',
+    'hover:bg-orange-900/70',
+    'bg-orange-900/30',
+    'hover:bg-orange-900/50',
+    // Green
+    'bg-green-900/50',
+    'hover:bg-green-900/70',
+    'bg-green-900/30',
+    'hover:bg-green-900/50',
+    // Red
+    'bg-red-900/50',
+    'hover:bg-red-900/70',
+    'bg-red-900/30',
+    'hover:bg-red-900/50',
+    // Purple (for non-base items)
+    'bg-purple-900/50'
+  ],
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;

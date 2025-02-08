@@ -1,64 +1,106 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { IoAdd, IoTrash } from 'react-icons/io5';
+import { IoAdd } from 'react-icons/io5';
 import { useSongStore } from '@/store/songStore';
 import { AddSongModal } from './AddSongModal';
+import { EditSongModal } from './EditSongModal';
+import type { Song } from '@/types';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { SortableSongItem } from './SortableSongItem';
 
 export function SongList() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { songs, selectedSong, setSelectedSong, deleteSong, loadSongs } = useSongStore();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingSong, setEditingSong] = useState<Song | null>(null);
+  const { songs, setSelectedSong, deleteSong, reorderSongs, loadSongs } = useSongStore();
 
   useEffect(() => {
     loadSongs();
-  }, []);
+  }, [loadSongs]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      const oldIndex = songs.findIndex((song) => song.id === active.id);
+      const newIndex = songs.findIndex((song) => song.id === over.id);
+      
+      if (oldIndex !== -1 && newIndex !== -1) {
+        reorderSongs(oldIndex, newIndex);
+      }
+    }
+  };
 
   return (
     <div className="w-80 h-full border-r border-gray-800 p-4 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-white text-xl font-bold">Songs</h2>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setIsAddModalOpen(true)}
           className="p-2 hover:bg-white/10 rounded-lg"
         >
-          <IoAdd className="text-white text-xl" />
+          <IoAdd className="text-white text-2xl" />
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {songs.map((song) => (
-          <div
-            key={song.id}
-            className={`p-4 rounded-lg mb-2 cursor-pointer ${
-              selectedSong?.id === song.id
-                ? 'bg-white/20'
-                : 'hover:bg-white/10'
-            }`}
-            onClick={() => setSelectedSong(song)}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={songs}
+            strategy={verticalListSortingStrategy}
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-white font-medium">{song.title}</h3>
-                <p className="text-gray-400 text-sm">Key: {song.key}</p>
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteSong(song.id);
-                }}
-                className="text-red-500 hover:text-red-400 p-2 hover:bg-white/5 rounded-lg transition-colors"
-              >
-                <IoTrash className="text-xl" />
-              </button>
+            <div className="space-y-2">
+              {songs.map((song) => (
+                <SortableSongItem
+                  key={song.id}
+                  song={song}
+                  onEdit={() => setEditingSong(song)}
+                  onDelete={() => deleteSong(song.id)}
+                  onSelect={() => setSelectedSong(song)}
+                />
+              ))}
             </div>
-          </div>
-        ))}
+          </SortableContext>
+        </DndContext>
       </div>
 
       <AddSongModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
       />
+
+      {editingSong && (
+        <EditSongModal
+          isOpen={!!editingSong}
+          onClose={() => setEditingSong(null)}
+          song={editingSong}
+        />
+      )}
     </div>
   );
 } 

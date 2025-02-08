@@ -22,6 +22,7 @@ interface SongStore {
   deleteSongFromDB: (id: string) => Promise<void>;
   debounceSave: (song: Song) => Promise<void>;
   updateSong: (id: string, title: string, key: string) => Promise<void>;
+  reorderSongs: (oldIndex: number, newIndex: number) => Promise<void>;
 }
 
 export const useSongStore = create<SongStore>((set, get) => ({
@@ -162,12 +163,10 @@ export const useSongStore = create<SongStore>((set, get) => ({
   loadSongs: async () => {
     try {
       const response = await fetch('/api/songs');
-      console.log({response});
       if (!response.ok) throw new Error('Failed to load songs');
       const songs = await response.json();
       set({ songs });
     } catch (error) {
-      console.log({error});
       console.error('Error loading songs:', error);
     }
   },
@@ -269,5 +268,39 @@ export const useSongStore = create<SongStore>((set, get) => ({
     } catch (error) {
       console.error('Error updating song:', error);
     }
-  }
+  },
+
+  reorderSongs: async (oldIndex: number, newIndex: number) => {
+    try {
+      const songs = [...get().songs];
+      const [movedSong] = songs.splice(oldIndex, 1);
+      songs.splice(newIndex, 0, movedSong);
+
+      // Atualiza estado local
+      set({ songs });
+
+      const reorderPayload = {
+        songs: songs.map((song, index) => ({
+          id: song.id,
+          order: index
+        }))
+      };
+
+      const response = await fetch('/api/songs/reorder', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reorderPayload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reorder songs');
+      }
+    } catch (error) {
+      console.error('Error reordering songs:', error);
+      // Recarrega as músicas em caso de erro
+      await get().loadSongs();
+    }
+  },
 })); 

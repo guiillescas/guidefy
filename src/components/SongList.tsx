@@ -1,13 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { IoAdd, IoTrash } from 'react-icons/io5';
 import { useSongStore } from '@/store/songStore';
 import { AddSongModal } from './AddSongModal';
 
 export function SongList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { songs, selectedSong, setSelectedSong, deleteSong } = useSongStore();
+  const { songs, selectedSong, setSelectedSong, deleteSong, loadSongs } = useSongStore();
+
+  useEffect(() => {
+    loadSongs();
+  }, []);
 
   return (
     <div className="w-80 h-full border-r border-gray-800 p-4 flex flex-col">

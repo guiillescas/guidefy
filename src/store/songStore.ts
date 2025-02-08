@@ -21,6 +21,7 @@ interface SongStore {
   updateSongInDB: (song: Song) => Promise<void>;
   deleteSongFromDB: (id: string) => Promise<void>;
   debounceSave: (song: Song) => Promise<void>;
+  updateSong: (id: string, title: string, key: string) => Promise<void>;
 }
 
 export const useSongStore = create<SongStore>((set, get) => ({
@@ -241,5 +242,32 @@ export const useSongStore = create<SongStore>((set, get) => ({
         console.error('Error saving sequence:', error);
       }
     }, 5000); // 5 segundos de delay
+  },
+
+  updateSong: async (id: string, title: string, key: string) => {
+    try {
+      const response = await fetch(`/api/songs/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title,
+          key,
+          sequence: get().selectedSong?.sequence || []
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to update song');
+      
+      const updatedSong = await response.json();
+      
+      set(state => ({
+        songs: state.songs.map(song => 
+          song.id === id ? updatedSong : song
+        ),
+        selectedSong: state.selectedSong?.id === id ? updatedSong : state.selectedSong
+      }));
+    } catch (error) {
+      console.error('Error updating song:', error);
+    }
   }
 })); 

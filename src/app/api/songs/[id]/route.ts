@@ -1,11 +1,11 @@
 import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { authOptions } from '@/lib/auth';
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -13,11 +13,13 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const id = (await params).id;
     const body = await request.json();
+    
     const song = await prisma.song.update({
       where: {
-        id: params.id,
-        userId: session.user.id // Garante que o usuário só pode atualizar suas próprias músicas
+        id: id,
+        userId: session.user.id
       },
       data: {
         title: body.title,
@@ -38,7 +40,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -46,9 +48,11 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const id = (await params).id;
+
     await prisma.song.delete({
       where: {
-        id: params.id,
+        id: id,
         userId: session.user.id
       }
     });
@@ -61,4 +65,11 @@ export async function DELETE(
       { status: 500 }
     );
   }
+}
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const slug = (await params).slug
 } 

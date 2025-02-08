@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { IoAdd } from 'react-icons/io5';
+import { IoAdd, IoTrash, IoPencil, IoReorderThree } from 'react-icons/io5';
 import { useSongStore } from '@/store/songStore';
 import { AddSongModal } from './AddSongModal';
 import { EditSongModal } from './EditSongModal';
+import { SongSkeleton } from './SongSkeleton';
 import type { Song } from '@/types';
 import {
   DndContext,
@@ -24,12 +25,17 @@ import {
 import { SortableSongItem } from './SortableSongItem';
 
 export function SongList() {
+  const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingSong, setEditingSong] = useState<Song | null>(null);
   const { songs, setSelectedSong, deleteSong, reorderSongs, loadSongs } = useSongStore();
 
   useEffect(() => {
-    loadSongs();
+    const fetchSongs = async () => {
+      await loadSongs();
+      setIsLoading(false);
+    };
+    fetchSongs();
   }, [loadSongs]);
 
   const sensors = useSensors(
@@ -65,28 +71,36 @@ export function SongList() {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={songs}
-            strategy={verticalListSortingStrategy}
+        {isLoading ? (
+          <div className="space-y-2">
+            {[...Array(5)].map((_, index) => (
+              <SongSkeleton key={index} />
+            ))}
+          </div>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
           >
-            <div className="space-y-2">
-              {songs.map((song) => (
-                <SortableSongItem
-                  key={song.id}
-                  song={song}
-                  onEdit={() => setEditingSong(song)}
-                  onDelete={() => deleteSong(song.id)}
-                  onSelect={() => setSelectedSong(song)}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
+            <SortableContext
+              items={songs}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-2">
+                {songs.map((song) => (
+                  <SortableSongItem
+                    key={song.id}
+                    song={song}
+                    onEdit={() => setEditingSong(song)}
+                    onDelete={() => deleteSong(song.id)}
+                    onSelect={() => setSelectedSong(song)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        )}
       </div>
 
       <AddSongModal

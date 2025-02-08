@@ -32,27 +32,27 @@ export function SortableSongItem({ song, onEdit, onDelete, onSelect }: SortableS
     <div
       ref={setNodeRef}
       style={style}
-      className={`p-3 rounded-lg cursor-pointer flex items-center justify-between bg-gray-900 hover:bg-gray-800 transition-colors`}
+      className="p-3 rounded-lg cursor-pointer flex items-center justify-between bg-gray-900 hover:bg-gray-800 transition-colors w-full"
     >
       <div
-        className="flex items-center flex-1 gap-2"
+        className="flex items-center flex-1 gap-2 min-w-0"
         onClick={onSelect}
       >
         <button
-          className="touch-none p-1 hover:bg-white/10 rounded"
+          className="touch-none p-1 hover:bg-white/10 rounded flex-shrink-0"
           {...attributes}
           {...listeners}
         >
           <IoReorderThree className="text-gray-400 text-xl" />
         </button>
-        <div>
-          <h3 className="text-white font-medium">{song.title}</h3>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-white font-medium truncate">{song.title}</h3>
           {song.key && (
-            <p className="text-gray-400 text-sm">Key: {song.key}</p>
+            <p className="text-gray-400 text-sm truncate">Key: {song.key}</p>
           )}
         </div>
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 flex-shrink-0">
         <button
           onClick={(e) => {
             e.stopPropagation();

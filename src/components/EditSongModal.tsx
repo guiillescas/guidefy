@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from 'react-hook-form';
+import { Loader2 } from "lucide-react";
 import type { Song } from '@/types';
 
 interface EditSongModalProps {
@@ -27,6 +28,7 @@ interface FormInputs {
 }
 
 export function EditSongModal({ isOpen, onClose, song }: EditSongModalProps) {
+  const [isUpdating, setIsUpdating] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm<FormInputs>({
     defaultValues: {
       title: song.title,
@@ -36,8 +38,15 @@ export function EditSongModal({ isOpen, onClose, song }: EditSongModalProps) {
   const { updateSong } = useSongStore();
 
   const onSubmit = async (data: FormInputs) => {
-    await updateSong(song.id, data.title, data.key);
-    onClose();
+    setIsUpdating(true);
+    try {
+      await updateSong(song.id, data.title, data.key);
+      onClose();
+    } catch (error) {
+      console.error('Error updating song:', error);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   return (
@@ -74,15 +83,24 @@ export function EditSongModal({ isOpen, onClose, song }: EditSongModalProps) {
               type="button" 
               variant="outline" 
               onClick={onClose}
+              disabled={isUpdating}
               className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 hover:text-white"
             >
               Cancel
             </Button>
             <Button 
               type="submit" 
+              disabled={isUpdating}
               className="bg-blue-900 text-white hover:bg-blue-800"
             >
-              Save Changes
+              {isUpdating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                'Save Changes'
+              )}
             </Button>
           </DialogFooter>
         </form>

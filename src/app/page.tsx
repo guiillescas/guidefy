@@ -362,38 +362,38 @@ export default function LandingPage() {
                 icon: "⚡️",
                 title: "Lightning Fast",
                 description: "Reorganize your setlist in seconds with intuitive drag and drop",
-                gradient: "from-yellow-500 to-orange-500"
+                gradient: "from-yellow-500 to-orange-500",
               },
               {
                 icon: "🎯",
                 title: "Stay Focused",
                 description: "Clear interface shows exactly what's coming next in your setlist",
-                gradient: "from-blue-500 to-purple-500"
+                gradient: "from-blue-500 to-purple-500",
               },
               {
                 icon: "🎹",
                 title: "Music-First Design",
                 description: "Created specifically for the needs of music directors",
-                gradient: "from-green-500 to-emerald-500"
+                gradient: "from-green-500 to-emerald-500",
               },
               {
                 icon: "🔄",
                 title: "Quick Changes",
                 description: "Make last-minute setlist changes without stress or confusion",
-                gradient: "from-purple-500 to-pink-500"
+                gradient: "from-purple-500 to-pink-500",
               },
               {
                 icon: "👥",
                 title: "Team Friendly",
                 description: "Keep your whole band on the same page with shared setlists",
-                gradient: "from-blue-500 to-cyan-500"
+                gradient: "from-blue-500 to-cyan-500",
               },
               {
                 icon: "💡",
                 title: "Intuitive Interface",
                 description: "No learning curve - start organizing setlists immediately",
-                gradient: "from-red-500 to-orange-500"
-              }
+                gradient: "from-red-500 to-orange-500",
+              },
             ].map((benefit, index) => (
               <motion.div
                 key={index}
@@ -401,7 +401,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="group relative p-6 rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-gray-600 transition-all"
+                className="group relative p-6 rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-gray-600"
               >
                 <div className="flex flex-col h-full">
                   <div className="mb-4 text-4xl">{benefit.icon}</div>
@@ -513,7 +513,7 @@ export default function LandingPage() {
       <section id="get-started" className="py-24 relative overflow-hidden">
         <div className="container px-4 mx-auto relative z-10">
           {/* Stats Grid */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -541,7 +541,7 @@ export default function LandingPage() {
                 </motion.div>
               )
             })}
-          </motion.div>
+          </motion.div> */}
 
           {/* Final CTA */}
           <motion.div className="relative rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-gray-800 p-8 md:p-12 lg:p-16 overflow-hidden">

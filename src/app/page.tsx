@@ -25,6 +25,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useCountUp } from '@/hooks/useCountUp'
+import ScrollTracker from '@/components/ScrollTracker';
 
 const stats = [
   { value: 500, label: 'Songs Organized', prefix: '+' },
@@ -143,7 +144,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header */}
+      <ScrollTracker />
+      
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">

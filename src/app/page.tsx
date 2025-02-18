@@ -1,31 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Music4, Shuffle, ListMusic, ArrowRight, Wand2, Twitter as TwitterIcon, Github as GithubIcon, Heart as HeartIcon } from 'lucide-react';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-  DragStartEvent,
-  DragOverlay,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-  useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { useCountUp } from '@/hooks/useCountUp'
+
 import ScrollTracker from '@/components/ScrollTracker';
+import AnimatedSongList from './components/AnimatedSongList';
+import Header from './components/Header';
 
 const stats = [
   { value: 500, label: 'Songs Organized', prefix: '+' },
@@ -34,7 +16,6 @@ const stats = [
   { value: 4.9, label: 'Average Rating', decimals: 1 },
 ];
 
-// Discord Icon Component
 const DiscordIcon = (props: any) => (
   <svg
     role="img"
@@ -46,169 +27,26 @@ const DiscordIcon = (props: any) => (
   </svg>
 )
 
-// Sortable Song Component
-function SortableSong({ song, id }: { song: string; id: string }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.3 : 1,
-  };
-
-  return (
-    <motion.div
-      ref={setNodeRef}
-      style={style}
-      className={`flex items-center justify-between p-4 rounded-lg bg-gray-700/50 backdrop-blur-sm border border-gray-600 cursor-move
-        ${isDragging ? 'shadow-lg ring-2 ring-blue-500/20' : ''}`}
-      layout
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      {...attributes}
-      {...listeners}
-    >
-      <div className="flex items-center gap-3">
-        <Music4 className="h-5 w-5 text-blue-400" />
-        <span className="text-gray-200">{song}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="px-2 py-1 rounded bg-blue-500/10 text-blue-400 text-xs">
-          Drag to reorder
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-// Dragging Song Component
-function DraggingSong({ song }: { song: string }) {
-  return (
-    <div className="flex items-center justify-between p-4 rounded-lg bg-gray-700/50 backdrop-blur-sm border border-gray-600 shadow-lg ring-2 ring-blue-500/20">
-      <div className="flex items-center gap-3">
-        <Music4 className="h-5 w-5 text-blue-400" />
-        <span className="text-gray-200">{song}</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="px-2 py-1 rounded bg-blue-500/10 text-blue-400 text-xs">
-          Drag to reorder
-        </div>
-      </div>
-    </div>
-  );
+interface Song {
+  id: string;
+  title: string;
+  annotation: string;
+  isTyping: boolean;
+  customTransition: boolean;
 }
 
 export default function LandingPage() {
   const router = useRouter();
-  const [songs, setSongs] = useState([
-    'Way Maker',
-    'How Great is Our God',
-    'Build My Life',
-  ]);
-  const [activeSong, setActiveSong] = useState<string | null>(null);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  function handleDragStart(event: DragStartEvent) {
-    setActiveSong(event.active.id as string);
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    setActiveSong(null);
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      setSongs((items) => {
-        const oldIndex = items.indexOf(active.id as string);
-        const newIndex = items.indexOf(over.id as string);
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <ScrollTracker />
       
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-gray-800 bg-gray-900/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <button 
-              onClick={() => router.push('/')}
-              className="font-space text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"
-            >
-              guidefy
-            </button>
+      <Header />
 
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-8">
-              {[
-                { label: 'Why Guidefy', href: '#why-guidefy' },
-                { label: 'Workflow', href: '#workflow' },
-                { label: 'Get Started', href: '#get-started' },
-              ].map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    const element = document.querySelector(item.href)
-                    if (element) {
-                      element.scrollIntoView({ 
-                        behavior: 'smooth',
-                        block: 'start'
-                      })
-                    }
-                  }}
-                  className="text-sm text-gray-400 hover:text-white transition-colors cursor-pointer"
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-
-            {/* Auth Buttons */}
-            <div className="flex items-center gap-4">
-              <Button
-                onClick={() => router.push('/login')}
-                variant="ghost"
-                className="text-gray-300 hover:text-white hover:bg-gray-800"
-              >
-                Sign In
-              </Button>
-              <Button
-                onClick={() => router.push('/register')}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                Get Started - $2.99/mo
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
       <section className="relative min-h-screen pt-16 flex items-center justify-center overflow-hidden">
         <div className="container px-4 mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left side - Text Content */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -230,7 +68,7 @@ export default function LandingPage() {
               </h1>
 
               <p className="text-gray-400 text-lg lg:text-xl mb-8 max-w-lg">
-                Stop struggling with setlist organization. Guidefy helps music directors 
+                Stop struggling with setlist organization. guidefy helps music directors 
                 create and modify song sequences in seconds, so you can focus on what 
                 matters: <span className="font-semibold">making great music</span>.
               </p>
@@ -254,7 +92,6 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Right side - Interactive Preview */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -268,34 +105,9 @@ export default function LandingPage() {
                   <div className="h-3 w-3 rounded-full bg-green-500"></div>
                 </div>
 
-                <div className="mt-8 space-y-4">
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragStart={handleDragStart}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <SortableContext
-                      items={songs}
-                      strategy={verticalListSortingStrategy}
-                    >
-                      <AnimatePresence>
-                        {songs.map((song) => (
-                          <SortableSong key={song} id={song} song={song} />
-                        ))}
-                      </AnimatePresence>
-                    </SortableContext>
-
-                    <DragOverlay>
-                      {activeSong ? (
-                        <DraggingSong song={activeSong} />
-                      ) : null}
-                    </DragOverlay>
-                  </DndContext>
-                </div>
+                <AnimatedSongList />
               </div>
 
-              {/* Decorative Elements */}
               <motion.div
                 animate={{
                   y: [0, -10, 0],
@@ -322,7 +134,6 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Background Elements */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-tr from-gray-900 via-gray-900 to-purple-900/20" />
           <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-500/5 blur-3xl rounded-full" />
@@ -330,7 +141,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Why Guidefy Section - Agora vem primeiro */}
       <section id="why-guidefy" className="py-24 relative">
         <div className="container px-4 mx-auto relative z-10">
           <motion.div
@@ -348,7 +158,7 @@ export default function LandingPage() {
             <h2 className="font-space text-4xl lg:text-5xl font-bold mb-6">
               Why choose
               <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent ml-2">
-                Guidefy?
+                guidefy?
               </span>
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -423,14 +233,12 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Background Elements */}
         <div className="absolute inset-0 z-0">
           <div className="absolute right-0 top-0 w-1/3 h-1/3 bg-blue-500/5 blur-3xl rounded-full" />
           <div className="absolute left-0 bottom-0 w-1/3 h-1/3 bg-purple-500/5 blur-3xl rounded-full" />
         </div>
       </section>
 
-      {/* Workflow Section - Agora vem depois */}
       <section id="workflow" className="py-24 relative overflow-hidden">
         <div className="container px-4 mx-auto relative z-10">
           <motion.div
@@ -453,7 +261,7 @@ export default function LandingPage() {
             </h2>
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
               Stop wasting time with complicated setlist management. 
-              Guidefy simplifies your workflow so you can focus on leading your band.
+              guidefy simplifies your workflow so you can focus on leading your band.
             </p>
           </motion.div>
 
@@ -502,14 +310,12 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Background Elements */}
         <div className="absolute inset-0 z-0">
           <div className="absolute right-0 bottom-0 w-1/3 h-1/3 bg-purple-500/5 blur-3xl rounded-full" />
           <div className="absolute left-0 top-0 w-1/3 h-1/3 bg-blue-500/5 blur-3xl rounded-full" />
         </div>
       </section>
 
-      {/* Stats Section with CTA */}
       <section id="get-started" className="py-24 relative overflow-hidden">
         <div className="container px-4 mx-auto relative z-10">
           {/* Stats Grid */}
@@ -543,7 +349,6 @@ export default function LandingPage() {
             })}
           </motion.div> */}
 
-          {/* Final CTA */}
           <motion.div className="relative rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-gray-800 p-8 md:p-12 lg:p-16 overflow-hidden">
             <div className="relative z-20 max-w-3xl mx-auto text-center">
               <h2 className="font-space text-4xl lg:text-5xl font-bold mb-6">
@@ -553,7 +358,7 @@ export default function LandingPage() {
                 </span>
               </h2>
               <p className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">
-                Join music directors who are already using Guidefy to lead their bands with confidence.
+                Join music directors who are already using guidefy to lead their bands with confidence.
                 <span className="block mt-2 text-blue-400">Just $2.99/month - no hidden fees.</span>
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -576,7 +381,6 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Decorative Elements */}
             <motion.div
               animate={{
                 scale: [1, 1.2, 1],
@@ -605,55 +409,15 @@ export default function LandingPage() {
           </motion.div>
         </div>
 
-        {/* Background Elements */}
         <div className="absolute inset-0 z-0">
           <div className="absolute right-0 top-0 w-1/3 h-1/3 bg-blue-500/5 blur-3xl rounded-full" />
           <div className="absolute left-0 bottom-0 w-1/3 h-1/3 bg-purple-500/5 blur-3xl rounded-full" />
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-gray-800">
-        <div className="container px-4 mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-4">
-              Powerful Features
-            </h2>
-            <p className="font-montserrat text-xl text-gray-400 max-w-2xl mx-auto">
-              Everything you need for efficient music direction, from planning to execution
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                className="p-6 rounded-lg bg-gray-900"
-              >
-                <div className="text-blue-500 mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
       <footer className="py-12 border-t border-gray-800 relative overflow-hidden">
         <div className="container px-4 mx-auto relative z-10">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-            {/* Logo + Description */}
             <div className="space-y-4">
               <h3 className="font-space text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 guidefy
@@ -663,7 +427,6 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Product */}
             <div>
               <h4 className="font-space text-sm font-semibold text-gray-300 mb-4">
                 Product
@@ -687,7 +450,6 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            {/* Legal */}
             <div>
               <h4 className="font-space text-sm font-semibold text-gray-300 mb-4">
                 Legal
@@ -710,7 +472,6 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            {/* Social */}
             <div>
               <h4 className="font-space text-sm font-semibold text-gray-300 mb-4">
                 Connect
@@ -740,11 +501,10 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Bottom Bar */}
           <div className="pt-8 mt-8 border-t border-gray-800">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-sm text-gray-400">
-                © {new Date().getFullYear()} Guidefy. All rights reserved.
+                © {new Date().getFullYear()} guidefy. All rights reserved.
               </p>
               <div className="flex items-center space-x-2 text-sm text-gray-400">
                 <span>Made with</span>
@@ -755,7 +515,6 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Background Elements */}
         <div className="absolute inset-0 z-0">
           <div className="absolute right-0 bottom-0 w-1/4 h-1/4 bg-blue-500/5 blur-3xl rounded-full" />
           <div className="absolute left-0 top-0 w-1/4 h-1/4 bg-purple-500/5 blur-3xl rounded-full" />

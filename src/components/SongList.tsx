@@ -23,11 +23,19 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { SortableSongItem } from './SortableSongItem';
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
 
-export function SongList() {
+interface SongListProps {
+  variant: 'sidebar' | 'sheet';
+}
+
+export function SongList({ variant }: SongListProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingSong, setEditingSong] = useState<Song | null>(null);
+  const [open, setOpen] = useState(false);
   const { songs, setSelectedSong, deleteSong, reorderSongs, loadSongs } = useSongStore();
 
   useEffect(() => {
@@ -58,10 +66,16 @@ export function SongList() {
     }
   };
 
-  return (
-    <div className="w-80 h-full border-r border-gray-800 p-4 flex flex-col">
+  const content = (
+    <div className={variant === 'sidebar' ? "w-80 h-full border-r border-gray-800 p-4 flex flex-col" : "h-full p-4 flex flex-col"}>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-white text-xl font-bold">Songs</h2>
+        {variant === 'sheet' ? (
+
+          <SheetTitle className="text-white text-xl font-bold">Songs</SheetTitle>
+        ) : (
+          <h2 className="text-white text-xl font-bold">Songs</h2>
+
+        )}
         <button
           onClick={() => setIsAddModalOpen(true)}
           className="p-2 hover:bg-white/10 rounded-lg"
@@ -94,7 +108,12 @@ export function SongList() {
                     song={song}
                     onEdit={() => setEditingSong(song)}
                     onDelete={() => deleteSong(song.id)}
-                    onSelect={() => setSelectedSong(song)}
+                    onSelect={() => {
+                      setSelectedSong(song);
+                      if (variant === 'sheet') {
+                        setOpen(false);
+                      }
+                    }}
                   />
                 ))}
               </div>
@@ -117,4 +136,21 @@ export function SongList() {
       )}
     </div>
   );
+
+  if (variant === 'sheet') {
+    return (
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <Menu className="h-6 w-6" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-80 p-0 bg-gray-900">
+          {content}
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  return content;
 } 

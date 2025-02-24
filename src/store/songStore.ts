@@ -302,8 +302,6 @@ export const useSongStore = create<SongStore>((set, get) => ({
         });
         throw new Error(`Failed to reorder songs: ${JSON.stringify(errorData)}`);
       }
-
-      const result = await response.json();
     } catch (error) {
       console.error('Full error details:', error);
       // Recarrega as músicas em caso de erro

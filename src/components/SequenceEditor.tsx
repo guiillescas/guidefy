@@ -21,6 +21,9 @@ import { NoteModal } from './NoteModal';
 import { ElementSelector } from './ElementSelector';
 import { Badge } from './ui/badge';
 import { getAbbreviation } from '@/utils/abbreviations';
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
+import { Button } from "./ui/button";
+import { Plus } from "lucide-react";
 
 export function SequenceEditor() {
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
@@ -69,14 +72,38 @@ export function SequenceEditor() {
       : abbr;
   }).join(', ');
 
+  const elementSelectorContent = <ElementSelector />;
+
   return (
     <div className="flex-1 flex">
       <div className="flex-1 p-6 overflow-y-auto">
-        <h1 className="text-2xl font-bold text-white mb-6 flex items-center gap-1">
-          {selectedSong.title}
-          {selectedSong.key && ' - '}
-          {selectedSong.key && <Badge className="text-lg p-0 bg-blue-900 hover:bg-blue-900 w-9 h-9 flex items-center justify-center">{selectedSong.key}</Badge>}
-        </h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-white flex items-center gap-1">
+            {selectedSong?.title}
+            {selectedSong?.key && ' - '}
+            {selectedSong?.key && (
+              <Badge className="text-lg p-0 bg-blue-900 hover:bg-blue-900 w-9 h-9 flex items-center justify-center">
+                {selectedSong.key}
+              </Badge>
+            )}
+          </h1>
+
+          {/* Sheet para mobile */}
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+
+                  <Plus className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-80 p-0 bg-gray-900 overflow-y-auto">
+                <SheetTitle className="text-white font-bold my-3 ml-4">Base Elements</SheetTitle>
+                {elementSelectorContent}
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
 
         {selectedSong && (
           <div className="bg-gray-800/50 p-3 rounded-lg mb-4 overflow-x-auto">
@@ -93,10 +120,10 @@ export function SequenceEditor() {
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={selectedSong.sequence}
+              items={selectedSong?.sequence || []}
               strategy={verticalListSortingStrategy}
             >
-              {selectedSong.sequence.map((item) => (
+              {selectedSong?.sequence.map((item) => (
                 <SequenceItem
                   key={item.id}
                   item={item}
@@ -107,7 +134,7 @@ export function SequenceEditor() {
             </SortableContext>
           </DndContext>
 
-          {selectedSong.sequence.length === 0 && (
+          {selectedSong?.sequence.length === 0 && (
             <div className="text-gray-500 text-center py-8">
               Add elements to create your sequence
             </div>
@@ -115,7 +142,10 @@ export function SequenceEditor() {
         </div>
       </div>
 
-      <ElementSelector />
+      {/* ElementSelector para desktop */}
+      <div className="hidden md:block">
+        {elementSelectorContent}
+      </div>
 
       <NoteModal
         isOpen={!!editingNoteId}

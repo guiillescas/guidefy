@@ -44,7 +44,7 @@ export function ElementSelector() {
   return (
     <div className="w-64 border-l border-gray-800 p-4 overflow-y-auto">
       <div className="mb-6">
-        <h3 className="text-white font-bold mb-3">Base Elements</h3>
+        <h3 className="text-white font-bold mb-3 hidden md:block">Base Elements</h3>
         <div className="space-y-2">
           {baseElements.map((element) => (
             <div key={element}>

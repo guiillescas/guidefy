@@ -245,7 +245,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 rounded-lg flex items-center justify-center gap-2 transition-all"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-lg flex items-center justify-center gap-2 transition-all h-[50px]"
               >
                 {isSubmitting ? 'Signing in...' : 'Sign In'}
                 <ArrowRight className="h-4 w-4" />

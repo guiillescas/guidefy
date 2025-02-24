@@ -27,14 +27,6 @@ const DiscordIcon = (props: any) => (
   </svg>
 )
 
-interface Song {
-  id: string;
-  title: string;
-  annotation: string;
-  isTyping: boolean;
-  customTransition: boolean;
-}
-
 export default function LandingPage() {
   const router = useRouter();
 
@@ -73,7 +65,6 @@ export default function LandingPage() {
                 matters: <span className="font-semibold">making great music</span>.
               </p>
 
-              {/* Quick Benefits */}
               <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
                 {[
                   { icon: <Shuffle className="h-5 w-5" />, text: "Instant song reordering" },
@@ -359,7 +350,7 @@ export default function LandingPage() {
               </h2>
               <p className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">
                 Join music directors who are already using guidefy to lead their bands with confidence.
-                <span className="block mt-2 text-blue-400">Just $2.99/month - no hidden fees.</span>
+                {/* <span className="block mt-2 text-blue-400">Just $2.99/month - no hidden fees.</span> */}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button
@@ -523,21 +514,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
-const features = [
-  {
-    title: 'Quick Creation',
-    description: 'Build your setlists in seconds with our intuitive interface',
-    icon: '🎵'
-  },
-  {
-    title: 'Easy Editing',
-    description: 'Drag and drop to effortlessly reorganize your songs',
-    icon: '✨'
-  },
-  {
-    title: 'Total Organization',
-    description: 'Keep all your setlists organized in one place',
-    icon: '📋'
-  }
-];

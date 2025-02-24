@@ -49,7 +49,8 @@ export default function Header() {
               onClick={() => router.push('/register')}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              Get Started - $2.99/mo
+              Sign up
+              {/* Get Started - $2.99/mo */}
             </Button>
           </div>
         </div>

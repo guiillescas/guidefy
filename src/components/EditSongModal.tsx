@@ -1,19 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { useSongStore } from '@/store/songStore';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
+import { Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { Loader2 } from "lucide-react";
+
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useSongStore } from '@/store/songStore';
 import type { Song } from '@/types';
 
 interface EditSongModalProps {
@@ -29,7 +25,11 @@ interface FormInputs {
 
 export function EditSongModal({ isOpen, onClose, song }: EditSongModalProps) {
   const [isUpdating, setIsUpdating] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm<FormInputs>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<FormInputs>({
     defaultValues: {
       title: song.title,
       key: song.key || ''
@@ -64,47 +64,35 @@ export function EditSongModal({ isOpen, onClose, song }: EditSongModalProps) {
               {...register('title', { required: 'Title is required' })}
               className="bg-gray-800 border-gray-700"
             />
-            {errors.title && (
-              <p className="text-red-500 text-sm">{errors.title.message}</p>
-            )}
+            {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="key">Key (optional)</Label>
-            <Input
-              id="key"
-              {...register('key')}
-              className="bg-gray-800 border-gray-700"
-            />
+            <Input id="key" {...register('key')} className="bg-gray-800 border-gray-700" />
           </div>
 
           <DialogFooter className="gap-2">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={onClose}
               disabled={isUpdating}
               className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 hover:text-white"
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              disabled={isUpdating}
-              className="bg-blue-900 text-white hover:bg-blue-800"
-            >
-              {isUpdating ? (
+            <Button type="submit" disabled={isUpdating} className="bg-blue-900 text-white hover:bg-blue-800">
+              {isUpdating ?
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Updating...
                 </>
-              ) : (
-                'Save Changes'
-              )}
+              : 'Save Changes'}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
   );
-} 
+}

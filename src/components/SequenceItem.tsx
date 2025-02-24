@@ -2,17 +2,16 @@
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { IoClose, IoPencil, IoReorderTwo, IoAdd, IoCopy } from 'react-icons/io5';
-import type { SequenceItem } from '@/types';
+
+import { IoAdd, IoClose, IoCopy, IoPencil, IoReorderTwo } from 'react-icons/io5';
+
 import { useSongStore } from '@/store/songStore';
+import type { SequenceItem } from '@/types';
 import { getElementColors } from '@/utils/colors';
 
 function hasMultipleOccurrences(element: string): boolean {
   const sequence = useSongStore.getState().selectedSong?.sequence || [];
-  return sequence.filter(item => 
-    item.type === 'base' && 
-    item.element === element
-  ).length > 1;
+  return sequence.filter(item => item.type === 'base' && item.element === element).length > 1;
 }
 
 interface SequenceItemProps {
@@ -23,21 +22,14 @@ interface SequenceItemProps {
   onAddNextOccurrence?: (element: string, currentOccurrence: number) => void;
 }
 
-export function SequenceItem({ 
-  item, 
-  onEditNote, 
+export function SequenceItem({
+  item,
+  onEditNote,
   onDeleteItem,
   onDuplicateItem,
-  onAddNextOccurrence 
+  onAddNextOccurrence
 }: SequenceItemProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ 
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: item.id,
     data: {
       type: 'item',
@@ -52,12 +44,12 @@ export function SequenceItem({
     WebkitUserSelect: 'none' as const,
     touchAction: 'manipulation' as const,
     WebkitTouchCallout: 'none' as const,
-    WebkitUserModify: 'read-write-plaintext-only' as const,
+    WebkitUserModify: 'read-write-plaintext-only' as const
   };
 
-  const displayText = item.type === 'base' 
-    ? hasMultipleOccurrences(item.element) 
-      ? `${item.element} ${item.occurrence || '1'}`
+  const displayText =
+    item.type === 'base' ?
+      hasMultipleOccurrences(item.element) ? `${item.element} ${item.occurrence || '1'}`
       : item.element
     : item.element;
 
@@ -77,20 +69,18 @@ export function SequenceItem({
         item.type === 'base' ? getElementColors(item.element).bg : 'bg-purple-900/50'
       } ${isDragging ? 'opacity-50' : ''}`}
     >
-      <div 
-        className="flex items-center justify-between p-4"
-        style={{ pointerEvents: 'auto' }}
-      >
+      <div className="flex items-center justify-between p-4" style={{ pointerEvents: 'auto' }}>
         <div className="flex items-center gap-3">
-          <div 
-            {...attributes} 
-            {...listeners} 
+          <div
+            {...attributes}
+            {...listeners}
             className="cursor-grab p-3 -m-2 hover:bg-white/10 rounded-lg touch-manipulation"
             style={{ touchAction: 'none' }}
           >
             <IoReorderTwo className="text-gray-400 text-2xl" />
           </div>
-          <span className="text-white font-medium text-lg select-none pointer-events-none"
+          <span
+            className="text-white font-medium text-lg select-none pointer-events-none"
             style={{
               userSelect: 'none',
               WebkitUserSelect: 'none',
@@ -125,25 +115,15 @@ export function SequenceItem({
               )}
             </>
           )}
-          <button
-            onClick={() => onEditNote(item.id)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-          >
+          <button onClick={() => onEditNote(item.id)} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
             <IoPencil className="text-white text-xl" />
           </button>
-          <button
-            onClick={() => onDeleteItem(item.id)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-          >
+          <button onClick={() => onDeleteItem(item.id)} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
             <IoClose className="text-white text-xl" />
           </button>
         </div>
       </div>
-      {item.note && (
-        <p className="text-gray-300 px-4 pb-4 italic select-none pointer-events-none">
-          {item.note}
-        </p>
-      )}
+      {item.note && <p className="text-gray-300 px-4 pb-4 italic select-none pointer-events-none">{item.note}</p>}
     </div>
   );
-} 
+}

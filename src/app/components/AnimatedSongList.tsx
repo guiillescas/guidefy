@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
 import { motion } from 'framer-motion';
 import { Music4 } from 'lucide-react';
 
@@ -19,22 +20,22 @@ export default function AnimatedSongList() {
       title: 'Verse 1',
       annotation: '',
       isTyping: false,
-      customTransition: false,
+      customTransition: false
     },
     {
       id: 'chorus',
       title: 'Chorus',
       annotation: 'The whole band coming on strong',
       isTyping: false,
-      customTransition: false,
+      customTransition: false
     },
     {
       id: 'bridge',
       title: 'Bridge',
       annotation: '',
       isTyping: false,
-      customTransition: false,
-    },
+      customTransition: false
+    }
   ];
 
   const [songs, setSongs] = useState<Song[]>(initialSongs);
@@ -50,17 +51,17 @@ export default function AnimatedSongList() {
         setPhase(1);
       }, 2000);
     } else if (phase === 1) {
-      setSongs((prevSongs) => {
+      setSongs(prevSongs => {
         const newSongs = [...prevSongs];
 
         newSongs[1] = {
           ...newSongs[1],
-          customTransition: true,
+          customTransition: true
         };
 
         newSongs[2] = {
           ...newSongs[2],
-          customTransition: true,
+          customTransition: true
         };
 
         const temp = newSongs[1];
@@ -74,8 +75,8 @@ export default function AnimatedSongList() {
         setPhase(2);
       }, 3000);
     } else if (phase === 2) {
-      setSongs((prevSongs) =>
-        prevSongs.map((song) => {
+      setSongs(prevSongs =>
+        prevSongs.map(song => {
           if (song.id === 'bridge') {
             return { ...song, isTyping: true, annotation: '' };
           }
@@ -91,8 +92,8 @@ export default function AnimatedSongList() {
 
         const currentText = textToType.slice(0, charIndex);
 
-        setSongs((prevSongs) =>
-          prevSongs.map((song) => {
+        setSongs(prevSongs =>
+          prevSongs.map(song => {
             if (song.id === 'bridge' && song.isTyping) {
               return { ...song, annotation: currentText };
             }
@@ -110,26 +111,26 @@ export default function AnimatedSongList() {
 
       return () => clearInterval(typeInterval);
     } else if (phase === 3) {
-      setSongs((prevSongs) => {
+      setSongs(prevSongs => {
         const newSongs = [...prevSongs];
 
         newSongs[1] = {
           ...newSongs[1],
           customTransition: true,
           isTyping: false,
-          annotation: '',
+          annotation: ''
         };
 
         newSongs[2] = {
           ...newSongs[2],
-          customTransition: true,
+          customTransition: true
         };
 
         const temp = newSongs[1];
         newSongs[1] = newSongs[2];
         newSongs[2] = temp;
 
-        return newSongs.map((song) => {
+        return newSongs.map(song => {
           if (song.id === 'chorus') {
             return { ...song, annotation: 'The whole band coming on strong' };
           }
@@ -141,21 +142,21 @@ export default function AnimatedSongList() {
         setPhase(4);
       }, 2000);
     } else if (phase === 4) {
-      setSongs((prevSongs) =>
-        prevSongs.map((song) => {
+      setSongs(prevSongs =>
+        prevSongs.map(song => {
           if (song.id === 'chorus') {
             return {
               ...song,
               annotation: 'The whole band coming on strong',
               customTransition: false,
-              isTyping: false,
+              isTyping: false
             };
           }
           return {
             ...song,
             annotation: '',
             customTransition: false,
-            isTyping: false,
+            isTyping: false
           };
         })
       );
@@ -170,9 +171,10 @@ export default function AnimatedSongList() {
 
   return (
     <div className="mt-8 space-y-4">
-      {songs.map((song) => {
-        const transition = song.customTransition
-          ? { type: 'spring', stiffness: 50, damping: 10 }
+      {songs.map(song => {
+        const transition =
+          song.customTransition ?
+            { type: 'spring', stiffness: 50, damping: 10 }
           : { type: 'spring', stiffness: 300, damping: 30 };
 
         return (
@@ -189,14 +191,10 @@ export default function AnimatedSongList() {
               <span className="text-gray-200">{song.title}</span>
             </div>
 
-            {song.annotation && (
-              <div className="mt-1 text-xs text-gray-400">
-                {song.annotation}
-              </div>
-            )}
+            {song.annotation && <div className="mt-1 text-xs text-gray-400">{song.annotation}</div>}
           </motion.div>
         );
       })}
     </div>
   );
-} 
+}

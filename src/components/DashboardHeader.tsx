@@ -1,9 +1,11 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
-import { useSongStore } from "@/store/songStore";
-import { SongList } from "./SongList";
+import { Menu } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { useSongStore } from '@/store/songStore';
+
+import { SongList } from './SongList';
 
 export function DashboardHeader() {
   const { songs, selectedSong, setSelectedSong } = useSongStore();
@@ -49,4 +51,4 @@ export function DashboardHeader() {
       </div>
     </header>
   );
-} 
+}

@@ -1,7 +1,9 @@
-import { getServerSession } from 'next-auth';
-import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+
+import { getServerSession } from 'next-auth';
+
 import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 interface SongOrder {
   id: string;
@@ -16,15 +18,13 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    
+
     if (!body || !body.songs || !Array.isArray(body.songs)) {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
     const { songs } = body as { songs: SongOrder[] };
 
-    // Primeiro, atualiza todas as ordens para números temporários negativos
-    // para evitar conflitos com a restrição unique
     await prisma.$transaction(
       songs.map(({ id }, index) =>
         prisma.song.update({
@@ -34,7 +34,6 @@ export async function PUT(request: Request) {
       )
     );
 
-    // Depois, atualiza para as ordens finais
     await prisma.$transaction(
       songs.map(({ id }, index) =>
         prisma.song.update({
@@ -51,10 +50,13 @@ export async function PUT(request: Request) {
       message: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : 'No stack available'
     });
-    
-    return NextResponse.json({
-      error: 'Error reordering songs',
-      details: error instanceof Error ? error.message : String(error)
-    }, { status: 500 });
+
+    return NextResponse.json(
+      {
+        error: 'Error reordering songs',
+        details: error instanceof Error ? error.message : String(error)
+      },
+      { status: 500 }
+    );
   }
-} 
+}

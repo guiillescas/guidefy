@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+
 import { Button } from '@/components/ui/button';
 
 export default function Header() {
@@ -19,12 +20,12 @@ export default function Header() {
             {[
               { label: 'Why guidefy', href: '#why-guidefy' },
               { label: 'Workflow', href: '#workflow' },
-              { label: 'Get Started', href: '#get-started' },
-            ].map((item) => (
+              { label: 'Get Started', href: '#get-started' }
+            ].map(item => (
               <a
                 key={item.label}
                 href={item.href}
-                onClick={(e) => {
+                onClick={e => {
                   e.preventDefault();
                   const element = document.querySelector(item.href);
                   if (element) {
@@ -45,10 +46,7 @@ export default function Header() {
             >
               Sign In
             </Button>
-            <Button
-              onClick={() => router.push('/register')}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
+            <Button onClick={() => router.push('/register')} className="bg-blue-600 hover:bg-blue-700">
               Sign up
               {/* Get Started - $2.99/mo */}
             </Button>
@@ -57,4 +55,4 @@ export default function Header() {
       </div>
     </header>
   );
-} 
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+
 import { event } from '@/lib/gtag';
 
 export default function ScrollTracker() {
@@ -12,7 +13,7 @@ export default function ScrollTracker() {
         action: 'scroll',
         category: 'engagement',
         label: 'Page Scroll',
-        value: scrollTop,
+        value: scrollTop
       });
     };
 
@@ -21,4 +22,4 @@ export default function ScrollTracker() {
   }, []);
 
   return null;
-} 
+}

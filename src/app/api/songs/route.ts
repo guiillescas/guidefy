@@ -1,7 +1,9 @@
-import { getServerSession } from 'next-auth';
-import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+
+import { getServerSession } from 'next-auth';
+
 import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request) {
   try {
@@ -35,7 +37,6 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    // Busca o maior order atual
     const lastSong = await prisma.song.findFirst({
       where: { userId: session.user.id },
       orderBy: { order: 'desc' }
@@ -58,4 +59,4 @@ export async function POST(request: Request) {
     console.error('Error creating song:', error);
     return NextResponse.json({ error: 'Error creating song' }, { status: 500 });
   }
-} 
+}

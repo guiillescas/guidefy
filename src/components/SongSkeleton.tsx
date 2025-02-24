@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function SongSkeleton() {
   return (
@@ -16,4 +16,4 @@ export function SongSkeleton() {
       </div>
     </div>
   );
-} 
+}

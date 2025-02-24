@@ -1,7 +1,8 @@
+import { Suspense } from 'react';
+
+import { DashboardHeader } from '@/components/DashboardHeader';
 import { SequenceEditor } from '@/components/SequenceEditor';
 import { SongList } from '@/components/SongList';
-import { DashboardHeader } from '@/components/DashboardHeader';
-import { Suspense } from 'react';
 
 export default function DashboardPage() {
   return (
@@ -17,4 +18,4 @@ export default function DashboardPage() {
       </main>
     </div>
   );
-} 
+}

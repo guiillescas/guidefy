@@ -14,31 +14,24 @@ const baseElements: BaseElement[] = [
   'Interlude',
   'Outro',
   'Tag',
-  'Ending',
+  'Ending'
 ];
 
-const flowElements: FlowElement[] = [
-  'Drums',
-  'Breakdown',
-  'Build',
-  'Pause'
-];
+const flowElements: FlowElement[] = ['Drums', 'Breakdown', 'Build', 'Pause'];
 
 export function ElementSelector() {
   const { addSequenceItem, selectedSong } = useSongStore();
 
   const getAvailableNumbers = (element: BaseElement): number[] => {
     if (!selectedSong) return [];
-    
+
     const occurrences = selectedSong.sequence
       .filter(item => item.type === 'base' && item.element === element)
       .map(item => item.occurrence || 1);
-    
+
     const maxOccurrence = Math.max(...occurrences, 0);
     // Se existem ocorrências, retorna um array com todos os números do 2 até maxOccurrence + 1
-    return maxOccurrence > 0 
-      ? Array.from({ length: maxOccurrence }, (_, i) => i + 2)
-      : [];
+    return maxOccurrence > 0 ? Array.from({ length: maxOccurrence }, (_, i) => i + 2) : [];
   };
 
   return (
@@ -46,7 +39,7 @@ export function ElementSelector() {
       <div className="mb-6">
         <h3 className="text-white font-bold mb-3 hidden md:block">Base Elements</h3>
         <div className="space-y-2">
-          {baseElements.map((element) => (
+          {baseElements.map(element => (
             <div key={element}>
               <button
                 onClick={() => addSequenceItem(element, 'base', 1)}
@@ -54,9 +47,9 @@ export function ElementSelector() {
               >
                 {element}
               </button>
-              
+
               <div className="flex flex-wrap gap-2 mt-2 pl-4">
-                {getAvailableNumbers(element).map((num) => (
+                {getAvailableNumbers(element).map(num => (
                   <button
                     key={num}
                     onClick={() => addSequenceItem(element, 'base', num)}
@@ -74,7 +67,7 @@ export function ElementSelector() {
       <div>
         <h3 className="text-white font-bold mb-3">Flow Elements</h3>
         <div className="space-y-2">
-          {flowElements.map((element) => (
+          {flowElements.map(element => (
             <button
               key={element}
               onClick={() => addSequenceItem(element, 'flow')}
@@ -87,4 +80,4 @@ export function ElementSelector() {
       </div>
     </div>
   );
-} 
+}

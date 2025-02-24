@@ -1,19 +1,22 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { register as registerUser } from '@/actions/auth'
-import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { Mail, Lock, User, Music2, Mic2, Radio, ArrowRight } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { registerSchema, type RegisterFormData } from '@/lib/validations/auth'
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+import { motion } from 'framer-motion';
+import { ArrowRight, Lock, Mail, Mic2, Music2, Radio, User } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+
+import { register as registerUser } from '@/actions/auth';
+import { Button } from '@/components/ui/button';
+import { type RegisterFormData, registerSchema } from '@/lib/validations/auth';
 
 export default function RegisterPage() {
-  const router = useRouter()
-  const [error, setError] = useState('')
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
+  const router = useRouter();
+  const [error, setError] = useState('');
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
   const {
     register,
@@ -21,74 +24,63 @@ export default function RegisterPage() {
     formState: { errors, isSubmitting }
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema)
-  })
+  });
 
-  // Hook para pegar o tamanho da janela apenas no cliente
   useEffect(() => {
     setWindowSize({
       width: window.innerWidth,
       height: window.innerHeight
-    })
-  }, [])
+    });
+  }, []);
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      // Log para debug
-      console.log('Form data before submission:', data)
+      console.log('Form data before submission:', data);
 
-      const result = await registerUser(
-        data.name.trim(),
-        data.email.trim().toLowerCase(),
-        data.password
-      )
+      const result = await registerUser(data.name.trim(), data.email.trim().toLowerCase(), data.password);
 
-      // Log para debug
-      console.log('Registration result:', result)
+      console.log('Registration result:', result);
 
       if (!result.success) {
-        setError(result.error || 'Registration failed')
-        return
+        setError(result.error || 'Registration failed');
+        return;
       }
 
-      router.push('/login')
+      router.push('/login');
     } catch (error) {
-      console.error('Registration error:', error)
-      setError('An unexpected error occurred')
+      console.error('Registration error:', error);
+      setError('An unexpected error occurred');
     }
-  }
+  };
 
-  // Animated music notes
-  const notes = Array(6).fill('♪')
+  const notes = Array(6).fill('♪');
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center relative overflow-hidden">
-      {/* Animated Background with Music Wave */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500" />
-        
-        {/* Animated wave */}
+
         <motion.div
           className="absolute bottom-0 left-0 right-0 h-64 opacity-30"
           style={{
-            background: 'linear-gradient(180deg, transparent, rgba(59, 130, 246, 0.2))',
+            background: 'linear-gradient(180deg, transparent, rgba(59, 130, 246, 0.2))'
           }}
           animate={{
-            y: [0, -30, 0],
+            y: [0, -30, 0]
           }}
           transition={{
             duration: 5,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: 'easeInOut'
           }}
         />
       </div>
 
-      {/* Floating Music Notes */}
       {notes.map((_, index) => (
         <motion.div
           key={index}
           className="absolute text-blue-500/20 text-4xl font-bold"
-          initial={{ 
+          initial={{
             x: Math.random() * (windowSize.width || 0),
             y: Math.random() * (windowSize.height || 0)
           }}
@@ -101,25 +93,24 @@ export default function RegisterPage() {
           transition={{
             duration: 5 + index,
             repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut",
+            repeatType: 'reverse',
+            ease: 'easeInOut'
           }}
         >
           ♪
         </motion.div>
       ))}
 
-      {/* Floating Icons */}
       <motion.div
         className="absolute top-20 right-32"
         animate={{
           scale: [1, 1.2, 1],
-          rotate: [0, 10, 0],
+          rotate: [0, 10, 0]
         }}
         transition={{
           duration: 8,
           repeat: Infinity,
-          repeatType: "reverse",
+          repeatType: 'reverse'
         }}
       >
         <Mic2 className="h-16 w-16 text-purple-500/20" />
@@ -129,53 +120,55 @@ export default function RegisterPage() {
         className="absolute bottom-32 left-20"
         animate={{
           scale: [1, 1.3, 1],
-          rotate: [0, -10, 0],
+          rotate: [0, -10, 0]
         }}
         transition={{
           duration: 7,
           repeat: Infinity,
-          repeatType: "reverse",
+          repeatType: 'reverse'
         }}
       >
         <Radio className="h-20 w-20 text-blue-500/20" />
       </motion.div>
 
-      {/* Audio Wave Animation */}
       <div className="absolute left-10 top-1/2 -translate-y-1/2 flex space-x-1">
-        {Array(5).fill('').map((_, i) => (
-          <motion.div
-            key={i}
-            className="w-1 bg-blue-500/20 rounded-full"
-            animate={{
-              height: [20, 40, 20],
-            }}
-            transition={{
-              duration: 1,
-              repeat: Infinity,
-              delay: i * 0.1,
-            }}
-          />
-        ))}
+        {Array(5)
+          .fill('')
+          .map((_, i) => (
+            <motion.div
+              key={i}
+              className="w-1 bg-blue-500/20 rounded-full"
+              animate={{
+                height: [20, 40, 20]
+              }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                delay: i * 0.1
+              }}
+            />
+          ))}
       </div>
 
       <div className="absolute right-10 top-1/2 -translate-y-1/2 flex space-x-1">
-        {Array(5).fill('').map((_, i) => (
-          <motion.div
-            key={i}
-            className="w-1 bg-purple-500/20 rounded-full"
-            animate={{
-              height: [20, 40, 20],
-            }}
-            transition={{
-              duration: 1,
-              repeat: Infinity,
-              delay: i * 0.1,
-            }}
-          />
-        ))}
+        {Array(5)
+          .fill('')
+          .map((_, i) => (
+            <motion.div
+              key={i}
+              className="w-1 bg-purple-500/20 rounded-full"
+              animate={{
+                height: [20, 40, 20]
+              }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                delay: i * 0.1
+              }}
+            />
+          ))}
       </div>
 
-      {/* Registration Form */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -187,12 +180,12 @@ export default function RegisterPage() {
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: "spring", duration: 1 }}
+              transition={{ type: 'spring', duration: 1 }}
               className="inline-block p-3 rounded-full bg-blue-500/10 mb-4"
             >
               <Music2 className="h-8 w-8 text-blue-400" />
             </motion.div>
-            <motion.h2 
+            <motion.h2
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -201,13 +194,9 @@ export default function RegisterPage() {
               Join Guidefy
             </motion.h2>
           </div>
-          
+
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-            >
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}>
               <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
                 Name
               </label>
@@ -220,18 +209,10 @@ export default function RegisterPage() {
                   placeholder="Enter your name"
                 />
               </div>
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.name.message}
-                </p>
-              )}
+              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-            >
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
               </label>
@@ -244,18 +225,10 @@ export default function RegisterPage() {
                   placeholder="Enter your email"
                 />
               </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.email.message}
-                </p>
-              )}
+              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
             </motion.div>
-            
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 }}
-            >
+
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 }}>
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
@@ -268,11 +241,7 @@ export default function RegisterPage() {
                   placeholder="Choose a password"
                 />
               </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
+              {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
             </motion.div>
 
             {error && (
@@ -285,11 +254,7 @@ export default function RegisterPage() {
               </motion.div>
             )}
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
               <Button
                 type="submit"
                 disabled={isSubmitting}
@@ -318,5 +283,5 @@ export default function RegisterPage() {
         </div>
       </motion.div>
     </div>
-  )
-} 
+  );
+}

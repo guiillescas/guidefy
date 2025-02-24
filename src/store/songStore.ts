@@ -276,29 +276,36 @@ export const useSongStore = create<SongStore>((set, get) => ({
       const [movedSong] = songs.splice(oldIndex, 1);
       songs.splice(newIndex, 0, movedSong);
 
-      // Atualiza estado local
       set({ songs });
 
-      const reorderPayload = {
-        songs: songs.map((song, index) => ({
-          id: song.id,
-          order: index
-        }))
-      };
+  
 
       const response = await fetch('/api/songs/reorder', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(reorderPayload)
+        body: JSON.stringify({
+          songs: songs.map((song, index) => ({
+            id: song.id,
+            order: index
+          }))
+        })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to reorder songs');
+        // Log da resposta de erro
+        const errorData = await response.json();
+        console.error('Server response:', {
+          status: response.status,
+          data: errorData
+        });
+        throw new Error(`Failed to reorder songs: ${JSON.stringify(errorData)}`);
       }
+
+      const result = await response.json();
     } catch (error) {
-      console.error('Error reordering songs:', error);
+      console.error('Full error details:', error);
       // Recarrega as músicas em caso de erro
       await get().loadSongs();
     }

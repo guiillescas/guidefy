@@ -23,33 +23,38 @@ export async function PUT(request: Request) {
 
     const { songs } = body as { songs: SongOrder[] };
 
-    // Verifica se todas as músicas pertencem ao usuário antes de atualizar
-    const userSongs = await prisma.song.findMany({
-      where: {
-        id: { in: songs.map(s => s.id) },
-        userId: session.user.id
-      }
-    });
-
-    if (userSongs.length !== songs.length) {
-      return NextResponse.json({ error: 'Unauthorized access to songs' }, { status: 403 });
-    }
-
+    // Primeiro, atualiza todas as ordens para números temporários negativos
+    // para evitar conflitos com a restrição unique
     await prisma.$transaction(
-      songs.map(({ id, order }) =>
+      songs.map(({ id }, index) =>
         prisma.song.update({
-          where: {
-            id,
-            userId: session.user.id
-          },
-          data: { order }
+          where: { id, userId: session.user.id },
+          data: { order: -1000 - index }
+        })
+      )
+    );
+
+    // Depois, atualiza para as ordens finais
+    await prisma.$transaction(
+      songs.map(({ id }, index) =>
+        prisma.song.update({
+          where: { id, userId: session.user.id },
+          data: { order: index }
         })
       )
     );
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error reordering songs:', error);
-    return NextResponse.json({ error: 'Error reordering songs' }, { status: 500 });
+    console.error('Detailed error:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : 'No stack available'
+    });
+    
+    return NextResponse.json({
+      error: 'Error reordering songs',
+      details: error instanceof Error ? error.message : String(error)
+    }, { status: 500 });
   }
 } 
